@@ -1,11 +1,11 @@
-# Overview
+## Overview
 
 どの顧客が貸し倒れになる可能性が高いかを予測
 
 - HomeCreditは、信用履歴がほとんどない人への融資を充填に行っている
 - スコアカード(=ローンのリスクを予測するモデル)を用いている
 
-## Evaluation
+### Evaluation
 
 gini係数
 
@@ -13,5 +13,5 @@ gini係数
 gini = 2*AUC - 1
 ```
 
-## Data
+### Data
 
