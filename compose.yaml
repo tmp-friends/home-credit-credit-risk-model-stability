@@ -1,6 +1,12 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        uid: 1000
+        gid: 1001
+        user: "jupyter"
     deploy:
       resources:
         reservations:
