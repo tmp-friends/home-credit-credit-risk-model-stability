@@ -1,9 +1,77 @@
 ## Diary
 
-### 2024/05/07
+### 2024/05/18
+
+- RegressorMixinやTransformerMixinも試してみる
+
+### 2024/05/16
+
+#### exp
+
+- モデルの学習に時間がかかるので、train, inferenceで分ける
+  - modelをsave, loadする
+- 0.592のコードの変更をいれる
+  - https://www.kaggle.com/code/pereradulina/credit-risk-prediction-with-lightgbm-and-catboost/notebook
+  - var(分散)の値を追加
+  - VotingModelをRegressionではなく、Classification
+- EDA
+  - WEEK_NUMと相関のありそうなカラムを見つける
+
+
+#### Survey
+
+- Method To Restore WEEK_NUM
+  - https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/501840
+
+### 2024/05/14
 #### EXP
 
 - Baselineを提出
+
+```py
+CV AUC scores:  [0.7434291067318943, 0.7877550255337937, 0.7343818432321955, 0.7014894607946911, 0.7278499778768225]
+Maximum CV AUC score:  0.7877550255337937
+CV AUC scores:  [0.764815416397035, 0.7891029895411878, 0.738460409620672, 0.726235534915644, 0.7387158304825012]
+Maximum CV AUC score:  0.7891029895411878
+```
+
+#### Memo
+
+- WEEK_NUMを復元しないと、勝負にならない
+
+#### Survey
+
+- Is the explosion of good scores related to restoring of WEEK_NUM?
+  - https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/501654
+  - Metric hack again, sorryを支持するDiscussion
+  - WEEK_NUMを復元して、再開前のようにmetricをhackする
+    - 参考: https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/476449
+
+- Problem with competition metric
+  - metricの問題点
+  - このDiscussionを受けて、コンペが一時中断された
+  - 問題点: metricの88 * min(0,a)の項が大きすぎるため、最初の数週間のスコアを意図的に悪化させることで、全体のスコアを大幅に改善できる
+  - 例の提示: WEEK_NUMがテスト期間の前半である場合にスコアを0.02下げることで、全体のスコアを約0.03改善できる
+
+    ```python
+    condition = df_subm['WEEK_NUM'] < (df_subm['WEEK_NUM'].max()-df_subm['WEEK_NUM'].min())/2+df_subm['WEEK_NUM'].min()
+    df_subm.loc[condition, 'score'] = (df_subm.loc[condition, 'score'] - 0.02).clip(0)
+    df_subm = df_subm[["case_id","score"]]
+    df_subm = df_subm.set_index("case_id")
+    df_subm.to_csv("submission.csv")
+
+    print(df_subm)
+    ```
+
+- We are back - Submissions open on Monday, 11th March 2024
+  - https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/482474
+  - 変更点:
+    - test_baseテーブルの日付に関連するカラム（date_decision、MONTH、WEEK_NUM）の変更
+    - MONTHとWEEK_NUMは定数値のみを持つようになるが、これらのカラムはスクリプトの変更時間を最小限にするために残される
+    - date_decisionカラムは変更され、他のデータも変換されるが、特徴量の意味は保持され、データ型も変わらない。分布に大きな変化はない
+  - metric自体は変更なし
+
+### 2024/05/07
 
 #### Memo
 
