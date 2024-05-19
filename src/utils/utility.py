@@ -205,6 +205,6 @@ class Utility:
         if cat_cols is None:
             cat_cols = list(df.select_dtypes("object").columns)
 
-        df[cat_cols] = df[cat_cols].astype("str")
+        df[cat_cols] = df[cat_cols].astype("category")
 
         return df, cat_cols

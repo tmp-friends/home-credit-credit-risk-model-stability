@@ -29,7 +29,7 @@ class SchemaGen:
             elif col[-1] in ["P", "A"]:
                 df = df.with_columns(pl.col(col).cast(pl.Float64).alias(col))
             elif col[-1] in ("M",):
-                df = df.with_columns(pl.col(col).cast(pl.Utf8))
+                df = df.with_columns(pl.col(col).cast(pl.String))
 
         return df
 
@@ -91,4 +91,4 @@ class SchemaGen:
         for i, df in enumerate(depth_0 + depth_1 + depth_2):
             df_base = df_base.join(df, how="left", on="case_id", suffix=f"_{i}")
 
-        return df_base.collect().pipe(Utility.reduce_memory_usage, "df_train")
+        return df_base.collect().pipe(Utility.reduce_memory_usage, "train_df")
