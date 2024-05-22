@@ -85,9 +85,9 @@ class Aggregator:
         """
         cols: list[str] = [col for col in df.columns if col.endswith(("P", "A", "D"))]
 
-        expr_mean: list[pl.Series] = [pl.col(col).var().alias(f"var_{col}") for col in cols]
+        expr_var: list[pl.Series] = [pl.col(col).var().alias(f"var_{col}") for col in cols]
 
-        return expr_mean
+        return expr_var
 
     @staticmethod
     def mode_expr(df: pl.LazyFrame) -> list[pl.Series]:

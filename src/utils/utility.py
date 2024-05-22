@@ -1,3 +1,4 @@
+import os
 from typing import Any
 
 import polars as pl
@@ -17,7 +18,7 @@ class Utility:
         Returns:
         - pl.DataFrame: Filtered feature definitions.
         """
-        feat_defs: pl.DataFrame = pl.read_csv(ROOT / "feature_definitions.csv")
+        feat_defs: pl.DataFrame = pl.read_csv(os.path.join(ROOT, "feature_definitions.csv"))
 
         filtered_feats: pl.DataFrame = feat_defs.filter(pl.col("Variable").apply(lambda var: var.endswith(ending_with)))
 
@@ -99,7 +100,7 @@ class Utility:
         Returns:
         - pl.DataFrame: DataFrame containing feature definitions, data types, and file locations.
         """
-        feat_defs: pl.DataFrame = pl.read_csv(ROOT / "feature_definitions.csv").filter(
+        feat_defs: pl.DataFrame = pl.read_csv(os.path.join(ROOT, "feature_definitions.csv")).filter(
             pl.col("Variable").apply(lambda var: var.endswith(ending_with))
         )
         feat_defs.sort(by=["Variable"])
