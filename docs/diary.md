@@ -1,4 +1,112 @@
 ## Diary
+### 2024/05/27
+#### exp
+
+- 特徴量を追加して、CVが上がるか調べる
+  - LB: 0.656のnotebookの設定
+    - num_expr(=P, A): max, last, mean
+    - date(=D): max, last, mean
+    - str(=M): max, last
+    - other(=T, L): max, last
+    - count(=num_group): max, last
+  - 自分のnotebookの特徴量はmax, mean, varのみ
+  - lastを追加 -> 向上
+
+    ```
+    CV AUC scores for CatBoost:  [0.8079759451079872, 0.7902685957337676, 0.8074474771654386, 0.8112194702442381, 0.841776222704894]
+    Maximum CV AUC score for CatBoost:  0.841776222704894
+    CV AUC scores for LGBM:  [0.8167326539360416, 0.812457651692548, 0.8282550593287852, 0.8177598899208806, 0.849682173011073]
+    Maximum CV AUC score for LGBM:  0.849682173011073
+    ```
+
+  - last, min, modeを追加 -> 悪化
+
+    ```
+    CV AUC scores for CatBoost:  [0.8393347546489643, 0.8002124048129938, 0.8292853934716131, 0.7924030274132088, 0.8129056509746336]
+    Maximum CV AUC score for CatBoost:  0.8393347546489643
+    CV AUC scores for LGBM:  [0.8465718998563141, 0.8198812006932772, 0.8395678771699157, 0.80967979366234, 0.8179445007173649]
+    Maximum CV AUC score for LGBM:  0.8465718998563141
+    ```
+
+  - last, modeを追加 -> 悪化
+
+    ```
+    CV AUC scores for CatBoost:  [0.8279435831400331, 0.8188083152668536, 0.8217109521376255, 0.797130943409019, 0.8059460322746936]
+    Maximum CV AUC score for CatBoost:  0.8279435831400331
+    CV AUC scores for LGBM:  [0.8357554931603157, 0.8291786596028581, 0.8337319025719638, 0.8153417077171415, 0.8179539847191665]
+    Maximum CV AUC score for LGBM:  0.8357554931603157
+    ```
+
+  - last, sumを追加 -> 悪化
+
+    ```
+    CV AUC scores for CatBoost:  [0.8267580367232591, 0.8173706401178576, 0.7828478459172222, 0.7944963182541015, 0.8316122158467123]
+    Maximum CV AUC score for CatBoost:  0.8316122158467123
+    CV AUC scores for LGBM:  [0.8414003859694055, 0.8160724133808466, 0.7999558255339615, 0.8162821140428996, 0.8391908754762207]
+    Maximum CV AUC score for LGBM:  0.8414003859694055
+    ```
+
+  - last, medianを追加 -> 悪化
+
+    ```
+    CV AUC scores for CatBoost:  [0.8251788274590744, 0.8233242195654042, 0.7929653773660927, 0.8002608082795322, 0.792774158007378]
+    Maximum CV AUC score for CatBoost:  0.8251788274590744
+    CV AUC scores for LGBM:  [0.8262651845782981, 0.832422570491857, 0.8097452271738611, 0.8232752544953623, 0.8090323244910028]
+    Maximum CV AUC score for LGBM:  0.832422570491857
+    ```
+
+  - varをstdへ -> 悪化
+
+    ```
+    CV AUC scores for CatBoost:  [0.8146160330194163, 0.7906193299116822, 0.81819608102194, 0.8130323551258799, 0.8167682781575546]
+    Maximum CV AUC score for CatBoost:  0.81819608102194
+    CV AUC scores for LGBM:  [0.8374520404604116, 0.8072776047613028, 0.8311722110588677, 0.8325152801710323, 0.8197270864855896]
+    Maximum CV AUC score for LGBM:  0.8374520404604116
+    ```
+
+- モデル追加
+  - 他のGBDT系モデルも作る
+    - https://www.kaggle.com/code/komekami/linking-writing-processes-to-writing-quality
+    - xgb
+    - svr
+    - ridge
+    - rfr
+    - lasso
+  - NN系モデルを作る(AutoMLとかでいい)
+
+- MetricHackでWEEK_NUMを用いてみる
+- HPO with Optuna
+
+#### Survey
+
+- VotingClassifier Home Credit
+  - https://www.kaggle.com/code/jonathanchan/votingclassifier-home-credit?scriptVersionId=179137452
+  - 公開notebookでは、最高スコアのLB: 0.656
+  - VotingClassifier > VotingRegressor
+- Shakeup is all you need!!
+  - https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/507556
+  - 60~91sまでのWEEK_NUMをtrainから取り出し、testとすれば、Adversal Validationとできる
+  - 単純な確率shiftはPublicLBでは有効だが、それ移行の期間では効かないよう
+  - Adversal Validation: trainとtestの分布が異なる際に、testに似たValidaationデータを作るための手法
+    - 目的変数をtrain(=1)とtest(=0)にして、2値分類を行うモデルを作る
+    - 参考: https://www.acceluniverse.com/blog/developers/2020/01/kaggleadversarial-validation.html
+
+
+### 2024/05/19
+#### Survey
+
+- How far can you go with cheating
+  - https://www.kaggle.com/code/andreasbis/how-far-can-you-go-with-cheating/notebook
+  - LB: 0.585 -> 0.653 (LB破壊)
+  - WEEK_NUMを使わずとも、trainとtestの分布がそもそも違うことを利用して(?)、MetricHackを行う
+    - WEEK_NUMを復元するのと、どちらがスコアが伸びるのか
+
+  ```py
+  condition=y_pred<0.978
+  SHIFT = 0.0718
+
+  df_subm.loc[condition, 'score'] = (df_subm.loc[condition, 'score'] - SHIFT).clip(0)
+  ```
 
 ### 2024/05/18
 
@@ -14,21 +122,29 @@
   - https://www.kaggle.com/code/pereradulina/credit-risk-prediction-with-lightgbm-and-catboost/notebook
   - var(分散)の値を追加
   - VotingModelをRegressionではなく、Classification
+
+  ```
+  CV AUC scores for CatBoost:  [0.8149291750320602, 0.8135111856042089, 0.8173872597673306, 0.813397177909435, 0.8191254826239982]
+  Maximum CV AUC score for CatBoost:  0.8191254826239982
+  CV AUC scores for LGBM:  [0.8277140797433427, 0.8288540082560015, 0.8308446622397907, 0.8251448295616548, 0.825535221459149]
+  Maximum CV AUC score for LGBM:  0.8308446622397907
+  ```
+
 - EDA
   - WEEK_NUMと相関のありそうなカラムを見つける
-
 
 #### Survey
 
 - Method To Restore WEEK_NUM
   - https://www.kaggle.com/competitions/home-credit-credit-risk-model-stability/discussion/501840
+  - `refreshdate_3813885D`を最大にして14日分引くと、日付を復元できる(相関0.91)
 
 ### 2024/05/14
 #### EXP
 
 - Baselineを提出
 
-```py
+```
 CV AUC scores:  [0.7434291067318943, 0.7877550255337937, 0.7343818432321955, 0.7014894607946911, 0.7278499778768225]
 Maximum CV AUC score:  0.7877550255337937
 CV AUC scores:  [0.764815416397035, 0.7891029895411878, 0.738460409620672, 0.726235534915644, 0.7387158304825012]
@@ -38,6 +154,7 @@ Maximum CV AUC score:  0.7891029895411878
 #### Memo
 
 - WEEK_NUMを復元しないと、勝負にならない
+  - WEEK_NUMが復元できると、テスト期間の前半のスコアを0.02下げることで、全体のスコアを上げることができるため
 
 #### Survey
 

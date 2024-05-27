@@ -13,7 +13,16 @@ class Aggregator:
         Returns:
         - list[pl.Series]: List of combined expressions.
         """
-        exprs = Aggregator.max_expr(df) + Aggregator.mean_expr(df) + Aggregator.var_expr(df)
+        exprs = (
+            Aggregator.max_expr(df)
+            # + Aggregator.min_expr(df)
+            + Aggregator.last_expr(df)
+            + Aggregator.mean_expr(df)
+            + Aggregator.var_expr(df)
+            # + Aggregator.sum_expr(df)
+            # + Aggregator.med_expr(df)
+            # + Aggregator.mode_expr(df)
+        )
 
         return exprs
 
@@ -56,6 +65,25 @@ class Aggregator:
         return expr_min
 
     @staticmethod
+    def last_expr(df: pl.LazyFrame) -> list[pl.Series]:
+        """
+        Generates expressions for calculating minimum values for specific columns.
+
+        Args:
+        - df (pl.LazyFrame): Input LazyFrame.
+
+        Returns:
+        - list[pl.Series]: List of expressions for last values.
+        """
+        cols: list[str] = [
+            col for col in df.columns if (col[-1] in ("P", "M", "A", "D", "T", "L")) or ("num_group" in col)
+        ]
+
+        expr_last: list[pl.Series] = [pl.col(col).last().alias(f"last_{col}") for col in cols]
+
+        return expr_last
+
+    @staticmethod
     def mean_expr(df: pl.LazyFrame) -> list[pl.Series]:
         """
         Generates expressions for calculating mean values for specific columns.
@@ -88,6 +116,40 @@ class Aggregator:
         expr_var: list[pl.Series] = [pl.col(col).var().alias(f"var_{col}") for col in cols]
 
         return expr_var
+
+    @staticmethod
+    def sum_expr(df: pl.LazyFrame) -> list[pl.Series]:
+        """
+        Generates expressions for calculating mean values for specific columns.
+
+        Args:
+        - df (pl.LazyFrame): Input LazyFrame.
+
+        Returns:
+        - list[pl.Series]: List of expressions for sum values.
+        """
+        cols: list[str] = [col for col in df.columns if col.endswith(("P", "A", "D"))]
+
+        expr_sum: list[pl.Series] = [pl.col(col).sum().alias(f"med_{col}") for col in cols]
+
+        return expr_sum
+
+    @staticmethod
+    def med_expr(df: pl.LazyFrame) -> list[pl.Series]:
+        """
+        Generates expressions for calculating mean values for specific columns.
+
+        Args:
+        - df (pl.LazyFrame): Input LazyFrame.
+
+        Returns:
+        - list[pl.Series]: List of expressions for sum values.
+        """
+        cols: list[str] = [col for col in df.columns if col.endswith(("P", "A", "D"))]
+
+        expr_med: list[pl.Series] = [pl.col(col).median().alias(f"med_{col}") for col in cols]
+
+        return expr_med
 
     @staticmethod
     def mode_expr(df: pl.LazyFrame) -> list[pl.Series]:
