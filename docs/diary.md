@@ -65,15 +65,16 @@
     ```
 
 - モデル追加
-  - 他のGBDT系モデルも作る
+  - 他のGBDT系モデル
     - https://www.kaggle.com/code/komekami/linking-writing-processes-to-writing-quality
     - xgb
-    - svr
-    - ridge
-    - rfr
-    - lasso
-  - NN系モデルを作る(AutoMLとかでいい)
 
+    ```
+    ```
+
+  - NN系モデル
+    - AutoML NN
+    - https://www.kaggle.com/code/alexryzhkov/lightautoml-nn-test
 - MetricHackでWEEK_NUMを用いてみる
 - HPO with Optuna
 
